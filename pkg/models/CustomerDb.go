@@ -40,3 +40,10 @@ func (cDB *CustomerDb) GetDb() map[int]Customer {
 func (cDB *CustomerDb) GetCustomer(id int) Customer {
 	return cDB.db[id]
 }
+
+func (cDB *CustomerDb) DeleteCustomer(id int) bool {
+	delete(cDB.db, id)
+	cDB.count--
+
+	return true
+}

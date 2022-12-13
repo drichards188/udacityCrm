@@ -85,7 +85,27 @@ func DeleteCustomer(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 
-	resp := models.DetailResp{Status: 1, Msg: "DeleteCustomer"}
+	params := mux.Vars(r)
+
+	id, ok := params["id"]
+
+	intId, err := strconv.Atoi(id)
+	if err != nil {
+		fmt.Printf("int convert error %s", err)
+	}
+	var resp models.DetailResp
+
+	if ok {
+		resp = models.DetailResp{Status: 1, Msg: id}
+
+		customerDb.DeleteCustomer(intId)
+
+		json.NewEncoder(w).Encode(models.DetailResp{Status: 1, Msg: "Customer deleted"})
+		return
+
+	} else {
+		resp = models.DetailResp{Status: 0, Msg: "customer id not provided"}
+	}
 
 	json.NewEncoder(w).Encode(resp)
 }
