@@ -63,10 +63,11 @@ func (cDB *CustomerDb) DeleteCustomer(id int) (bool, error) {
 
 }
 
-func (cDB *CustomerDb) UpdateCustomer(customer Customer) (Customer, error) {
-	customer, ok := cDB.db[customer.Id]
+func (cDB *CustomerDb) UpdateCustomer(id int, customer Customer) (Customer, error) {
+	customer, ok := cDB.db[id]
 	if ok {
-		cDB.db[customer.Id] = customer
+		customer.Id = id
+		cDB.db[id] = customer
 
 		return customer, nil
 	} else {

@@ -86,28 +86,48 @@ func CreateCustomer(w http.ResponseWriter, r *http.Request) {
 func UpdateCustomer(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	reqBody, _ := ioutil.ReadAll(r.Body)
+	params := mux.Vars(r)
 
-	var newCustomer models.Customer
-	err := json.Unmarshal(reqBody, &newCustomer)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Printf("unmarshal error %s", err)
-		json.NewEncoder(w).Encode(models.DetailResp{Status: 0, Msg: "internal server error"})
-		return
-	}
-	_, err = customerDb.UpdateCustomer(newCustomer)
+	id, ok := params["id"]
 
-	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		fmt.Printf("UpdateCustomer error %s", err)
+	if ok {
+
+		intId, err := strconv.Atoi(id)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			fmt.Printf("int convert error %s", err)
+			json.NewEncoder(w).Encode(models.DetailResp{Status: 0, Msg: "internal server error"})
+			return
+		}
+
+		reqBody, _ := ioutil.ReadAll(r.Body)
+
+		var newCustomer models.Customer
+		err = json.Unmarshal(reqBody, &newCustomer)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			fmt.Printf("unmarshal error %s", err)
+			json.NewEncoder(w).Encode(models.DetailResp{Status: 0, Msg: "internal server error"})
+			return
+		}
+		_, err = customerDb.UpdateCustomer(intId, newCustomer)
+
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			fmt.Printf("UpdateCustomer error %s", err)
+			json.NewEncoder(w).Encode(models.DetailResp{Status: 0, Msg: "customer not found"})
+			return
+		}
+
+		resp := models.DetailResp{Status: 1, Msg: "Customer Updated"}
+
+		json.NewEncoder(w).Encode(resp)
+	} else {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Printf("UpdateCustomer error")
 		json.NewEncoder(w).Encode(models.DetailResp{Status: 0, Msg: "customer not found"})
 		return
 	}
-
-	resp := models.DetailResp{Status: 1, Msg: "Customer Updated"}
-
-	json.NewEncoder(w).Encode(resp)
 }
 
 func DeleteCustomer(w http.ResponseWriter, r *http.Request) {
