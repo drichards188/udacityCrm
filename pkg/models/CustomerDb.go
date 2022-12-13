@@ -47,3 +47,9 @@ func (cDB *CustomerDb) DeleteCustomer(id int) bool {
 
 	return true
 }
+
+func (cDB *CustomerDb) UpdateCustomer(customer Customer) Customer {
+	cDB.db[customer.Id] = customer
+
+	return customer
+}

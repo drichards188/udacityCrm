@@ -74,9 +74,17 @@ func CreateCustomer(w http.ResponseWriter, r *http.Request) {
 
 func UpdateCustomer(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
 
-	resp := models.DetailResp{Status: 1, Msg: "UpdateCustomer"}
+	reqBody, _ := ioutil.ReadAll(r.Body)
+
+	var newCustomer models.Customer
+	err := json.Unmarshal(reqBody, &newCustomer)
+	if err != nil {
+		fmt.Printf("unmarshal error %s", err)
+	}
+	customerDb.UpdateCustomer(newCustomer)
+
+	resp := models.DetailResp{Status: 1, Msg: "Customer Updated"}
 
 	json.NewEncoder(w).Encode(resp)
 }
