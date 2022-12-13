@@ -18,11 +18,7 @@ func GetAllCustomers(w http.ResponseWriter, r *http.Request) {
 
 	resp := customerDb.GetDb()
 
-	err := json.NewEncoder(w).Encode(resp)
-	if err != nil {
-		fmt.Printf("error in GetAllCustomer: %s", err)
-		return
-	}
+	json.NewEncoder(w).Encode(resp)
 }
 
 func GetCustomer(w http.ResponseWriter, r *http.Request) {
@@ -35,7 +31,10 @@ func GetCustomer(w http.ResponseWriter, r *http.Request) {
 
 	intId, err := strconv.Atoi(id)
 	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Printf("int convert error %s", err)
+		json.NewEncoder(w).Encode(models.DetailResp{Status: 0, Msg: "internal server error"})
+		return
 	}
 	var resp models.DetailResp
 
@@ -48,7 +47,9 @@ func GetCustomer(w http.ResponseWriter, r *http.Request) {
 		return
 
 	} else {
+		w.WriteHeader(http.StatusBadRequest)
 		resp = models.DetailResp{Status: 0, Msg: "customer id not provided"}
+		return
 	}
 
 	json.NewEncoder(w).Encode(resp)
@@ -63,7 +64,10 @@ func CreateCustomer(w http.ResponseWriter, r *http.Request) {
 	var newCustomer models.Customer
 	err := json.Unmarshal(reqBody, &newCustomer)
 	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Printf("unmarshal error %s", err)
+		json.NewEncoder(w).Encode(models.DetailResp{Status: 0, Msg: "internal server error"})
+		return
 	}
 	customerDb.AddCustomer(newCustomer)
 
@@ -80,7 +84,10 @@ func UpdateCustomer(w http.ResponseWriter, r *http.Request) {
 	var newCustomer models.Customer
 	err := json.Unmarshal(reqBody, &newCustomer)
 	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Printf("unmarshal error %s", err)
+		json.NewEncoder(w).Encode(models.DetailResp{Status: 0, Msg: "internal server error"})
+		return
 	}
 	customerDb.UpdateCustomer(newCustomer)
 
@@ -99,7 +106,10 @@ func DeleteCustomer(w http.ResponseWriter, r *http.Request) {
 
 	intId, err := strconv.Atoi(id)
 	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Printf("int convert error %s", err)
+		json.NewEncoder(w).Encode(models.DetailResp{Status: 0, Msg: "internal server error"})
+		return
 	}
 	var resp models.DetailResp
 
@@ -112,7 +122,10 @@ func DeleteCustomer(w http.ResponseWriter, r *http.Request) {
 		return
 
 	} else {
+		w.WriteHeader(http.StatusBadRequest)
 		resp = models.DetailResp{Status: 0, Msg: "customer id not provided"}
+		json.NewEncoder(w).Encode(models.DetailResp{Status: 0, Msg: "customer id not provided"})
+		return
 	}
 
 	json.NewEncoder(w).Encode(resp)
