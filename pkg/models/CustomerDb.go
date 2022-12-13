@@ -1,5 +1,7 @@
 package models
 
+import "errors"
+
 type DetailResp struct {
 	Status int
 	Msg    string
@@ -37,19 +39,39 @@ func (cDB *CustomerDb) GetDb() map[int]Customer {
 	return cDB.db
 }
 
-func (cDB *CustomerDb) GetCustomer(id int) Customer {
-	return cDB.db[id]
+func (cDB *CustomerDb) GetCustomer(id int) (Customer, error) {
+	customer, ok := cDB.db[id]
+
+	if ok {
+		return customer, nil
+	} else {
+		return Customer{}, errors.New("customer not found")
+	}
 }
 
-func (cDB *CustomerDb) DeleteCustomer(id int) bool {
-	delete(cDB.db, id)
-	cDB.count--
+func (cDB *CustomerDb) DeleteCustomer(id int) (bool, error) {
+	_, ok := cDB.db[id]
 
-	return true
+	if ok {
+		delete(cDB.db, id)
+		cDB.count--
+
+		return true, nil
+	} else {
+		return false, errors.New("customer not found")
+	}
+
 }
 
-func (cDB *CustomerDb) UpdateCustomer(customer Customer) Customer {
-	cDB.db[customer.Id] = customer
+func (cDB *CustomerDb) UpdateCustomer(id int, customer Customer) (Customer, error) {
+	customer, ok := cDB.db[id]
+	if ok {
+		customer.Id = id
+		cDB.db[id] = customer
 
-	return customer
+		return customer, nil
+	} else {
+		return Customer{}, errors.New("customer not found")
+	}
+
 }
