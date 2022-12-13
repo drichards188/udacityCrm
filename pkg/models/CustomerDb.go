@@ -13,14 +13,14 @@ type CustomerDb struct {
 func NewCustomerDb() *CustomerDb {
 	db := &CustomerDb{count: 0, db: map[int]Customer{}}
 
-	db.addCustomer(Customer{Id: 0, Name: "david", Role: "dev", active: true})
-	db.addCustomer(Customer{Id: 0, Name: "allie", Role: "sales", active: true})
-	db.addCustomer(Customer{Id: 0, Name: "kovax", Role: "leadership", active: true})
+	db.AddCustomer(Customer{Id: 0, Name: "david", Role: "dev", active: true})
+	db.AddCustomer(Customer{Id: 0, Name: "allie", Role: "sales", active: true})
+	db.AddCustomer(Customer{Id: 0, Name: "kovax", Role: "leadership", active: true})
 
 	return db
 }
 
-func (cDB *CustomerDb) addCustomer(newCustomer Customer) DetailResp {
+func (cDB *CustomerDb) AddCustomer(newCustomer Customer) DetailResp {
 	_, ok := cDB.db[newCustomer.Id]
 
 	if ok {

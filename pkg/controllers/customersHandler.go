@@ -54,35 +54,20 @@ func GetCustomer(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(resp)
 }
 
-// This "create" handler function's goal is to take user input via a JSON request body (i.e., payload)
-// As a response to calls made to its associated route, this function returns the new state of the recently-updated dictionary
 func CreateCustomer(w http.ResponseWriter, r *http.Request) {
 	// Set the appropriate Content-Type in the response header
 	w.Header().Set("Content-Type", "application/json")
 
-	// Create (but not yet assign values to) for the new entry
-	var newEntry map[string]string
-
-	// Read the HTTP request body
 	reqBody, _ := ioutil.ReadAll(r.Body)
-	// Encode the request body into a Golang value so that we can work with the data
-	json.Unmarshal(reqBody, &newEntry)
 
-	// Iterate over the "newEntry" map
-	//for k, v := range newEntry {
-	//	if _, ok := dictionary[k]; ok {
-	//		// If the key already exists (i.e., "dictionary" work already exists) in the map, update the HTTP status with a "407 Conflict" message
-	//		// In such a case, we do not update the original "dictionay" map at all
-	//		w.WriteHeader(http.StatusConflict)
-	//	} else {
-	//		// If the key doesn't exist, add it to the "dictionary" map and return a "201 Created" in the header
-	//		dictionary[k] = v
-	//		w.WriteHeader(http.StatusCreated)
-	//	}
-	//}
+	var newCustomer models.Customer
+	err := json.Unmarshal(reqBody, &newCustomer)
+	if err != nil {
+		fmt.Printf("unmarshal error %s", err)
+	}
+	customerDb.AddCustomer(newCustomer)
 
-	// Regardless of successful resource creation or not, return the current state of the "dictionary" map
-	resp := models.DetailResp{Status: 1, Msg: "CreateCustomer"}
+	resp := models.DetailResp{Status: 1, Msg: "Customer Created"}
 
 	json.NewEncoder(w).Encode(resp)
 }
