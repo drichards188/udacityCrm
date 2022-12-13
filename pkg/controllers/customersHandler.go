@@ -41,7 +41,14 @@ func GetCustomer(w http.ResponseWriter, r *http.Request) {
 	if ok {
 		resp = models.DetailResp{Status: 1, Msg: id}
 
-		customer := customerDb.GetCustomer(intId)
+		customer, err := customerDb.GetCustomer(intId)
+
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			fmt.Printf("GetCustomer error %s", err)
+			json.NewEncoder(w).Encode(models.DetailResp{Status: 0, Msg: "customer not found"})
+			return
+		}
 
 		json.NewEncoder(w).Encode(customer)
 		return
@@ -89,7 +96,14 @@ func UpdateCustomer(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(models.DetailResp{Status: 0, Msg: "internal server error"})
 		return
 	}
-	customerDb.UpdateCustomer(newCustomer)
+	_, err = customerDb.UpdateCustomer(newCustomer)
+
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Printf("UpdateCustomer error %s", err)
+		json.NewEncoder(w).Encode(models.DetailResp{Status: 0, Msg: "customer not found"})
+		return
+	}
 
 	resp := models.DetailResp{Status: 1, Msg: "Customer Updated"}
 
@@ -116,13 +130,20 @@ func DeleteCustomer(w http.ResponseWriter, r *http.Request) {
 	if ok {
 		resp = models.DetailResp{Status: 1, Msg: id}
 
-		customerDb.DeleteCustomer(intId)
+		_, err = customerDb.DeleteCustomer(intId)
+
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			fmt.Printf("DeleteCustomer error %s", err)
+			json.NewEncoder(w).Encode(models.DetailResp{Status: 0, Msg: "customer not found"})
+			return
+		}
 
 		json.NewEncoder(w).Encode(models.DetailResp{Status: 1, Msg: "Customer deleted"})
 		return
 
 	} else {
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusNotFound)
 		resp = models.DetailResp{Status: 0, Msg: "customer id not provided"}
 		json.NewEncoder(w).Encode(models.DetailResp{Status: 0, Msg: "customer id not provided"})
 		return
