@@ -8,6 +8,7 @@ This project is a Golang api that does CRUD operations on Customer objects. It r
 
 * Install Go version 1.18 or higher
 * Clone the project with `git clone https://github.com/drichards188/udacityCrm.git`
+* go to folder and run `go get -d ./...`
 
 ## Run 
 
