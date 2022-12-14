@@ -18,7 +18,13 @@ This project is a Golang api that does CRUD operations on Customer objects. It r
 ## Usage
 
 The Customer object you will pass is 
-`{ Id: int, Name: string, Role: string, Active: bool }`
+`{ Id        int
+	Name      string
+	Role      string
+	Email     string
+	Phone     string
+	Contacted bool
+  }`
 
 * Get all customers: `/customers` GET
 * Get single customer: `/customers/:id` GET 
