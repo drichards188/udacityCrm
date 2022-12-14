@@ -13,12 +13,13 @@ func main() {
 	router := mux.NewRouter()
 	// Register handler functions to the same path -- but with different methods
 	// E.g., only a GET request to /dictionary can invoke the "getDictionary" handler function
-	router.HandleFunc("/", controllers.GetRoot).Methods("GET")
+	//router.HandleFunc("/", controllers.GetRoot).Methods("GET")
 	router.HandleFunc("/customers", controllers.GetAllCustomers).Methods("GET")
 	router.HandleFunc("/customers", controllers.CreateCustomer).Methods("POST")
 	router.HandleFunc("/customers/{id}", controllers.GetCustomer).Methods("GET")
 	router.HandleFunc("/customers/{id}", controllers.UpdateCustomer).Methods("PUT")
 	router.HandleFunc("/customers/{id}", controllers.DeleteCustomer).Methods("DELETE")
+	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 
 	fmt.Println("Server is starting on port 3000...")
 	// Pass the customer router into ListenAndServe
