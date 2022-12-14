@@ -15,9 +15,9 @@ type CustomerDb struct {
 func NewCustomerDb() *CustomerDb {
 	db := &CustomerDb{count: 0, db: map[int]Customer{}}
 
-	db.AddCustomer(Customer{Id: 0, Name: "david", Role: "dev", active: true})
-	db.AddCustomer(Customer{Id: 0, Name: "allie", Role: "sales", active: true})
-	db.AddCustomer(Customer{Id: 0, Name: "kovax", Role: "leadership", active: true})
+	db.AddCustomer(Customer{Id: 0, Name: "david", Role: "dev", Email: "nope@gmail.com", Phone: "1238475", Contacted: true})
+	db.AddCustomer(Customer{Id: 0, Name: "allie", Role: "dev", Email: "nope@gmail.com", Phone: "1278475", Contacted: false})
+	db.AddCustomer(Customer{Id: 0, Name: "kovax", Role: "dev", Email: "nope@gmail.com", Phone: "1538475", Contacted: true})
 
 	return db
 }
@@ -64,7 +64,7 @@ func (cDB *CustomerDb) DeleteCustomer(id int) (bool, error) {
 }
 
 func (cDB *CustomerDb) UpdateCustomer(id int, customer Customer) (Customer, error) {
-	customer, ok := cDB.db[id]
+	_, ok := cDB.db[id]
 	if ok {
 		customer.Id = id
 		cDB.db[id] = customer
